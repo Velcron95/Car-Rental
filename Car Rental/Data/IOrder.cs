@@ -8,4 +8,5 @@ public interface IOrder
     void Add(Order order);
     void Update(Order order);
     void Delete(Order order);
+    IEnumerable<OrderViewModel> DisplayOrders();
 }

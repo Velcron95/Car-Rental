@@ -34,6 +34,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="Index">Orders</a>
                         </li>
+                        @if (Context.Session.GetString("UserId") != null)
+                        {
+                            <li>
+                                <a href="@Url.Action("DisplayOrders", "Order")">My Orders</a>
+                            </li>
+                        }
                     </ul>
                     <div>
                         @if (Context.Session.GetString("UserId") != null)
@@ -42,6 +48,7 @@
                             <form method="post" action="@Url.Action("Logout", "Customer")">
                                 <button type="submit">Logout</button>
                             </form>
+                            
                         }
                         else
                         {
@@ -49,6 +56,7 @@
                             <a href="@Url.Action("Login", "Customer")">Login</a>
                         }
                     </div>
+                    
                 </div>
             </div>
         </nav>

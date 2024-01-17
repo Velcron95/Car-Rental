@@ -42,5 +42,23 @@ namespace Car_Rental.Data
             applicationDbContext.Remove(order);
             applicationDbContext.SaveChanges();
         }
+        public IEnumerable<OrderViewModel> DisplayOrders()
+        {
+            var orders = applicationDbContext.Order.Include(o => o.Car).ToList();
+
+            // Map Order entities to OrderViewModel
+            var orderViewModels = orders.Select(o => new OrderViewModel
+            {
+                OrderId = o.OrderId,
+                StartDate = o.StartDate,
+                EndDate = o.EndDate,
+                CarBrand = o.Car.Brand,
+                CarModel = o.Car.Model
+            });
+
+            return orderViewModels;
+        }
+
+       
     }
 }

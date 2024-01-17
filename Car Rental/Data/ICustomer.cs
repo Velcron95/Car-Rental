@@ -8,4 +8,5 @@ public interface ICustomer
     void Add(Customer customer);
     void Update(Customer customer);
     void Delete(Customer customer);
+    
 }

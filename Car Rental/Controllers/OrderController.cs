@@ -3,23 +3,46 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Car_Rental.Data;
 using Car_Rental.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace Car_Rental.Controllers
+
 {
+    
     public class OrderController : Controller
     {
         private readonly IOrder orderRep;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public OrderController(IOrder orderRep)
+
+        public OrderController(IOrder orderRep, IHttpContextAccessor httpContextAccessor)
         {
             this.orderRep = orderRep;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // GET: Order
-        public IActionResult Index()
+        public ActionResult Index()
         {
             return View(orderRep.GetAll());
         }
+        public ActionResult DisplayOrders()
+        {
+            var currentUserEmail = HttpContext.Session.GetString("UserId");
+            var isLoggedIn = !string.IsNullOrEmpty(currentUserEmail);
+
+            if (isLoggedIn)
+            {
+                
+                var orderViewModels = orderRep.DisplayOrders(); 
+                return View(orderViewModels);
+            }
+
+            
+            return RedirectToAction("Login"); 
+        }
+
 
         // GET: Order/Details/5
         public ActionResult Details(int id)

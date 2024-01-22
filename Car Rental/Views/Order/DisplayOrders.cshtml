@@ -20,10 +20,11 @@
             {
                 <tr>
                     <td>@order.OrderId</td>
-                    <td>@order.StartDate</td>
-                    <td>@order.EndDate</td>
                     <td>@order.CarBrand</td>
                     <td>@order.CarModel</td>
+                    <td>@order.StartDate.ToString("yyyy-MM-dd")</td>
+                    <td>@order.EndDate.ToString("yyyy-MM-dd")</td>
+                    
                     <td>
                         <form asp-action="Delete" asp-controller="Order" method="post">
                             <input type="hidden" name="id" value="@order.OrderId" />

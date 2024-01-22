@@ -47,6 +47,12 @@
                     @Html.ActionLink("Details", "Details", new { id = item.CarId }) |
                     @Html.ActionLink("Delete", "Delete", new { id = item.CarId })
                 </td>
+                <td>
+                    <a href="@Url.Action("Create", "Order", new { carId = item.CarId})">Create Order</a>
+
+                </td>
+
+
         </tr>
 }
     </tbody>

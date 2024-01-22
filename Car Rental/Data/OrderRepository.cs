@@ -9,20 +9,22 @@ namespace Car_Rental.Data
     public class OrderRepository : IOrder
     {
         private readonly ApplicationDbContext applicationDbContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public OrderRepository(ApplicationDbContext applicationDbContext)
+        public OrderRepository(ApplicationDbContext applicationDbContext, IHttpContextAccessor httpContextAccessor)
         {
             this.applicationDbContext = applicationDbContext;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IEnumerable<Order> GetAll()
         {
-            return applicationDbContext.Order.ToList();
+            return applicationDbContext.Order.Include(x=>x.User).Include(s=>s.Car).ToList();
         }
 
         public Order GetById(int id)
         {
-            return applicationDbContext.Order.FirstOrDefault(o => o.OrderId == id);
+            return applicationDbContext.Order.Include(x => x.User).Include(s => s.Car).FirstOrDefault(o => o.OrderId == id);
         }
 
         public void Add(Order order)
@@ -42,11 +44,16 @@ namespace Car_Rental.Data
             applicationDbContext.Remove(order);
             applicationDbContext.SaveChanges();
         }
-        public IEnumerable<OrderViewModel> DisplayOrders()
-        {
-            var orders = applicationDbContext.Order.Include(o => o.Car).ToList();
 
-            // Map Order entities to OrderViewModel
+
+
+        public IEnumerable<OrderViewModel> DisplayOrders(string userEmail)
+        {
+            var orders = applicationDbContext.Order
+                .Include(o => o.Car)
+                .Where(o => o.User.Email == userEmail) 
+                .ToList();
+
             var orderViewModels = orders.Select(o => new OrderViewModel
             {
                 OrderId = o.OrderId,
@@ -59,6 +66,6 @@ namespace Car_Rental.Data
             return orderViewModels;
         }
 
-       
+
     }
 }

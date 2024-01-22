@@ -12,7 +12,7 @@ namespace Car_Rental
 
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Biluthyrning;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"));
             builder.Services.AddTransient<ICar, CarRepository>();
-            builder.Services.AddTransient<ICustomer, CustomerRepository>();
+            builder.Services.AddTransient<IUser, UserRepository>();
             builder.Services.AddTransient<IOrder, OrderRepository>();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddDistributedMemoryCache();

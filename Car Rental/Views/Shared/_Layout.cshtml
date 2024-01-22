@@ -22,19 +22,17 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Car" asp-action="Index">Cars</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Index">Customers</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">User</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="Index">Orders</a>
                         </li>
-                        @if (Context.Session.GetString("UserId") != null)
+                        @if (Context.Session.GetString("Email") != null)
                         {
                             <li>
                                 <a href="@Url.Action("DisplayOrders", "Order")">My Orders</a>
@@ -42,10 +40,10 @@
                         }
                     </ul>
                     <div>
-                        @if (Context.Session.GetString("UserId") != null)
+                        @if (Context.Session.GetString("Email") != null)
                         {
-                            <p>Welcome @Context.Session.GetString("UserId")!</p>
-                            <form method="post" action="@Url.Action("Logout", "Customer")">
+                            <p>Welcome @Context.Session.GetString("Email")</p>
+                            <form method="post" action="@Url.Action("Logout", "User")">
                                 <button type="submit">Logout</button>
                             </form>
                             
@@ -53,7 +51,7 @@
                         else
                         {
                             <p></p>
-                            <a href="@Url.Action("Login", "Customer")">Login</a>
+                            <a href="@Url.Action("Login", "User")">Login</a>
                         }
                     </div>
                     

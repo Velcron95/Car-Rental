@@ -2,9 +2,9 @@
 
 namespace Car_Rental.Models
 {
-    public class Customer
+    public class User
     {
-        public int CustomerId { get; set; }
+        public int UserId { get; set; }
         [Required]
         public string Email { get; set; } = string.Empty;
         [Required]
@@ -13,7 +13,7 @@ namespace Car_Rental.Models
 
         public virtual List<Order> Orders { get; set; }
 
-        public Customer()
+        public User()
         {
             Orders = new List<Order>();
         }

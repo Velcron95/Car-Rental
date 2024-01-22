@@ -3,23 +3,23 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Car_Rental.Data;
 using Car_Rental.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 
 namespace Car_Rental.Controllers
-
 {
-    
     public class OrderController : Controller
     {
         private readonly IOrder orderRep;
+        private readonly IUser userRep;
+        private readonly ICar carRep;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-
-        public OrderController(IOrder orderRep, IHttpContextAccessor httpContextAccessor)
+        public OrderController(IOrder orderRep, IHttpContextAccessor httpContextAccessor, IUser userRep, ICar carRep)
         {
             this.orderRep = orderRep;
             _httpContextAccessor = httpContextAccessor;
+            this.userRep = userRep;
+            this.carRep = carRep;
         }
 
         // GET: Order
@@ -27,22 +27,20 @@ namespace Car_Rental.Controllers
         {
             return View(orderRep.GetAll());
         }
+
         public ActionResult DisplayOrders()
         {
-            var currentUserEmail = HttpContext.Session.GetString("UserId");
+            var currentUserEmail = HttpContext.Session.GetString("Email");
             var isLoggedIn = !string.IsNullOrEmpty(currentUserEmail);
 
             if (isLoggedIn)
             {
-                
-                var orderViewModels = orderRep.DisplayOrders(); 
+                var orderViewModels = orderRep.DisplayOrders(currentUserEmail);
                 return View(orderViewModels);
             }
 
-            
-            return RedirectToAction("Login"); 
+            return RedirectToAction("Login", "User");
         }
-
 
         // GET: Order/Details/5
         public ActionResult Details(int id)
@@ -51,40 +49,74 @@ namespace Car_Rental.Controllers
         }
 
         // GET: Order/Create
-        public ActionResult Create()
+        public ActionResult Create(int carId)
         {
-            return View();
+            
+            var currentUserId = HttpContext.Session.GetInt32("UserId");
+            
+            
+
+            if (currentUserId != null)
+            {
+
+                var car = carRep.GetById(carId);
+                var orderCreateVM = new OrderCreateVM(carId);
+
+                return View();
+            }
+
+            return RedirectToAction("Login", "User");
         }
 
         // POST: Order/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Order order)
+        public ActionResult Create(OrderCreateVM orderCreateVM)
         {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    orderRep.Add(order);
-                    return RedirectToAction(nameof(Index));
-                }
+            
+            int currentUserId = HttpContext.Session.GetInt32("UserId") ?? throw new Exception("User Id Null");
+            
 
-                foreach (var modelState in ModelState.Values)
-                {
-                    foreach (var error in modelState.Errors)
+            if (currentUserId != null)
+            {
+                    if (ModelState.IsValid)
                     {
-                        Console.WriteLine($"ModelState Error: {error.ErrorMessage}");
-                    }
-                }
+                        try
+                        {
+                            var car = carRep.GetById(orderCreateVM.CarId);
+                            var user = userRep.GetById(currentUserId); 
+                            var order = new Order
+                            {
+                                Car = car,
+                                User = user,
+                                StartDate = orderCreateVM.StartDate,
+                                EndDate = orderCreateVM.EndDate
+                            };
 
-                return View(order);
+                            orderRep.Add(order);
+
+                            return RedirectToAction("DisplayOrders");
+                        }
+                        catch (Exception ex)
+                        {
+                           
+                            return RedirectToAction("Error");
+                        }
+                    }
+
+     
+                    
+                
+
+                
+                return RedirectToAction("Login", "User");
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception: {ex.Message}");
-                return View(order);
-            }
+
+            
+            return RedirectToAction("Login", "User");
         }
+
+
 
         // GET: Order/Edit/5
         public ActionResult Edit(int? id)
@@ -158,5 +190,7 @@ namespace Car_Rental.Controllers
 
             return NotFound();
         }
+
+       
     }
 }

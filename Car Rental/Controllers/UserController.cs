@@ -8,38 +8,38 @@ using Car_Rental.Data;
 
 namespace Car_Rental.Controllers
 {
-    public class CustomerController : Controller
+    public class UserController : Controller
     {
-        private readonly ICustomer customerRep;
+        private readonly IUser userRep;
         private readonly ApplicationDbContext applicationDbContext;
 
 
-        public CustomerController(ICustomer customerRep, ApplicationDbContext applicationDbContext)
+        public UserController(IUser userRep, ApplicationDbContext applicationDbContext)
         {
-            this.customerRep = customerRep;
+            this.userRep = userRep;
             this.applicationDbContext = applicationDbContext;
         }
 
         public ActionResult Index()
         {
-            return View(customerRep.GetAll());
+            return View(userRep.GetAll());
         }
-        // GET: CarController/Create
+        // GET: User/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: CarController/Create
+        // POST: User/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Customer customer)
+        public ActionResult Create(User user)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    customerRep.Add(customer);
+                    userRep.Add(user);
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -53,16 +53,17 @@ namespace Car_Rental.Controllers
                 }
 
                 
-                return View(customer);
+                return View(user);
             }
             catch (Exception ex)
             {
                 
                 Console.WriteLine($"Exception: {ex.Message}");
-                return View(customer);
+                return View(user);
             }
         }
 
+        //Get
             public IActionResult Login()
         {
             return View();
@@ -73,9 +74,11 @@ namespace Car_Rental.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (IsValidUser(model.Email, model.Password))
+                if (IsValidUser(model.Email, model.Password,out var user))
                 {
-                    HttpContext.Session.SetString("UserId", model.Email);
+                    HttpContext.Session.SetInt32("UserId", user.UserId);
+                    HttpContext.Session.SetString("Email", model.Email);
+                    HttpContext.Session.SetInt32("IsAdmin", Convert.ToInt32(user.IsAdmin));
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -86,26 +89,20 @@ namespace Car_Rental.Controllers
             return View(model);
         }
 
-        private bool IsValidUser(string username, string password)
+        private bool IsValidUser(string username, string password, out User user)
         {
-            var user = applicationDbContext.Customer.FirstOrDefault(u => u.Email == username);
+            user = applicationDbContext.User.FirstOrDefault(u => u.Email == username);
 
-            if (user != null && user.Password == password)
-            {
-                HttpContext.Session.SetString("IsAdmin", user.IsAdmin.ToString());
-                return true;
-            }
-
-            return false;
+            return user != null && user.Password == password;
         }
         [HttpPost]
         public ActionResult Logout()
         {
             // Remove the session key
-            HttpContext.Session.Remove("UserId");
+            HttpContext.Session.Remove("Email");
 
             // Optionally, remove the cookie (if you have set a cookie during login)
-            Response.Cookies.Delete("UserId");
+            Response.Cookies.Delete("Email");
 
             return RedirectToAction("Index", "Home");
         }

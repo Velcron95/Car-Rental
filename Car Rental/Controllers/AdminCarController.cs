@@ -11,69 +11,70 @@ using System.Runtime.ConstrainedExecution;
 
 namespace Car_Rental.Controllers
 {
-    public class AdminUserController : Controller
+    public class AdminCarController : Controller
     {
-        private readonly IUser userRep;
-        
+        private readonly ICar carRep;
 
-        public AdminUserController(IUser userRep)
+        public AdminCarController(ICar carRep)
         {
-            this.userRep = userRep;
-            
+            this.carRep = carRep;
         }
 
-        // GET: AdminUser
+
+
+
+        // GET: AdminCar
         public IActionResult Index()
         {
-            var user = userRep.GetAll();
-            return View(user);
+            var cars = carRep.GetAll();
+            return View(cars);
         }
 
-        // GET: AdminUser/Details/5
+        // GET: AdminCar/Details/5
         public IActionResult Details(int id)
         {
-            return View(userRep.GetById(id));
+            return View(carRep.GetById(id));
         }
 
-        // GET: AdminUser/Create
+        // GET: AdminCar/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: AdminUser/Create
+        // POST: AdminCar/Create
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("UserId,Email,Password,IsAdmin")] User user)
+        public IActionResult Create(Car car)
         {
             if (ModelState.IsValid)
             {
-                userRep.Add(user);
+                carRep.Add(car);
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            return View(car);
         }
 
-        // GET: AdminUser/Edit/5
+        // GET: AdminCar/Edit/5
         public IActionResult Edit(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-            var user = userRep.GetById(id);
-           
-            return View(user);
+            var car = carRep.GetById(id);
+
+            return View(car);
         }
 
-        // POST: AdminUser/Edit/5
+        // POST: AdminCar/Edit/5
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("UserId,Email,Password,IsAdmin")] User user)
+        public IActionResult Edit(int id, Car car)
         {
-            if (id != user.UserId)
+            if (id != car.CarId)
             {
                 return NotFound();
             }
@@ -82,7 +83,7 @@ namespace Car_Rental.Controllers
             {
                 try
                 {
-                    userRep.Update(user);
+                    carRep.Update(car);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception)
@@ -90,10 +91,10 @@ namespace Car_Rental.Controllers
                     return View();
                 }
             }
-            return View(user);
+            return View(car);
         }
 
-        // GET: AdminUser/Delete/5
+        // GET: AdminCar/Delete/5
         public IActionResult Delete(int id)
         {
             if (id == null)
@@ -101,26 +102,26 @@ namespace Car_Rental.Controllers
                 return NotFound();
             }
 
-            var user = userRep.GetById(id);
+            var car = carRep.GetById(id);
 
-            if (user == null)
+            if (car == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return View(car);
         }
 
-        // POST: AdminUser/Delete/5
+        // POST: AdminCar/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            var user = userRep.GetById(id);
+            var car = carRep.GetById(id);
 
-            if (user != null)
+            if (car != null)
             {
-                userRep.Delete(user);
+                carRep.Delete(car);
                 return RedirectToAction(nameof(Index));
             }
 

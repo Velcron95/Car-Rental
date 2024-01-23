@@ -9,7 +9,7 @@ namespace Car_Rental.Models
         public string Email { get; set; } = string.Empty;
         [Required]
         public string Password { get; set; } = string.Empty;
-        public bool IsAdmin { get; set; }
+        public bool IsAdmin { get; set; } = false;
 
         public virtual List<Order> Orders { get; set; }
 

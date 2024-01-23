@@ -7,73 +7,70 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Car_Rental.Data;
 using Car_Rental.Models;
-using System.Runtime.ConstrainedExecution;
 
 namespace Car_Rental.Controllers
 {
-    public class AdminUserController : Controller
+    public class AdminOrderController : Controller
     {
-        private readonly IUser userRep;
-        
+        private readonly IOrder orderRep;
 
-        public AdminUserController(IUser userRep)
+        public AdminOrderController(IOrder orderRep)
         {
-            this.userRep = userRep;
-            
+            this.orderRep = orderRep;
         }
 
-        // GET: AdminUser
+        // GET: AdminOrder
         public IActionResult Index()
         {
-            var user = userRep.GetAll();
-            return View(user);
+            var orders = orderRep.GetAll();
+            return View(orders);
         }
 
-        // GET: AdminUser/Details/5
+        // GET: AdminOrder/Details/5
         public IActionResult Details(int id)
         {
-            return View(userRep.GetById(id));
+            return View(orderRep.GetById(id));
         }
 
-        // GET: AdminUser/Create
+        // GET: AdminOrder/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: AdminUser/Create
+        // POST: AdminOrder/Create
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("UserId,Email,Password,IsAdmin")] User user)
+        public IActionResult Create(Order order)
         {
             if (ModelState.IsValid)
             {
-                userRep.Add(user);
+                orderRep.Add(order);
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            return View(order);
         }
 
-        // GET: AdminUser/Edit/5
+        // GET: AdminOrder/Edit/5
         public IActionResult Edit(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-            var user = userRep.GetById(id);
-           
-            return View(user);
+            var order = orderRep.GetById(id);
+
+            return View(order);
         }
 
-        // POST: AdminUser/Edit/5
+        // POST: AdminOrder/Edit/5
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("UserId,Email,Password,IsAdmin")] User user)
+        public IActionResult Edit(int id, Order order)
         {
-            if (id != user.UserId)
+            if (id != order.OrderId)
             {
                 return NotFound();
             }
@@ -82,7 +79,7 @@ namespace Car_Rental.Controllers
             {
                 try
                 {
-                    userRep.Update(user);
+                    orderRep.Update(order);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception)
@@ -90,10 +87,10 @@ namespace Car_Rental.Controllers
                     return View();
                 }
             }
-            return View(user);
+            return View(order);
         }
 
-        // GET: AdminUser/Delete/5
+        // GET: AdminOrder/Delete/5
         public IActionResult Delete(int id)
         {
             if (id == null)
@@ -101,26 +98,26 @@ namespace Car_Rental.Controllers
                 return NotFound();
             }
 
-            var user = userRep.GetById(id);
+            var order = orderRep.GetById(id);
 
-            if (user == null)
+            if (order == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return View(order);
         }
 
-        // POST: AdminUser/Delete/5
+        // POST: AdminOrder/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            var user = userRep.GetById(id);
+            var order = orderRep.GetById(id);
 
-            if (user != null)
+            if (order != null)
             {
-                userRep.Delete(user);
+                orderRep.Delete(order);
                 return RedirectToAction(nameof(Index));
             }
 

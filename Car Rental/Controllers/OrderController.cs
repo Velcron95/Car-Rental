@@ -12,21 +12,17 @@ namespace Car_Rental.Controllers
         private readonly IOrder orderRep;
         private readonly IUser userRep;
         private readonly ICar carRep;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        
 
-        public OrderController(IOrder orderRep, IHttpContextAccessor httpContextAccessor, IUser userRep, ICar carRep)
+        public OrderController(IOrder orderRep,  IUser userRep, ICar carRep)
         {
             this.orderRep = orderRep;
-            _httpContextAccessor = httpContextAccessor;
             this.userRep = userRep;
             this.carRep = carRep;
         }
 
-        // GET: Order
-        public ActionResult Index()
-        {
-            return View(orderRep.GetAll());
-        }
+       
+
 
         public ActionResult DisplayOrders()
         {
@@ -118,78 +114,78 @@ namespace Car_Rental.Controllers
 
 
 
-        // GET: Order/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //// GET: Order/Edit/5
+        //public ActionResult Edit(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var order = orderRep.GetById(id.Value);
+        //    var order = orderRep.GetById(id.Value);
 
-            if (order == null)
-            {
-                return NotFound();
-            }
+        //    if (order == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(order);
-        }
+        //    return View(order);
+        //}
 
-        // POST: Order/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Order order)
-        {
-            if (id != order.OrderId)
-            {
-                return NotFound();
-            }
+        //// POST: Order/Edit/5
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Edit(int id, Order order)
+        //{
+        //    if (id != order.OrderId)
+        //    {
+        //        return NotFound();
+        //    }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    orderRep.Update(order);
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (Exception)
-                {
-                    return View();
-                }
-            }
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            orderRep.Update(order);
+        //            return RedirectToAction(nameof(Index));
+        //        }
+        //        catch (Exception)
+        //        {
+        //            return View();
+        //        }
+        //    }
 
-            return View(order);
-        }
+        //    return View(order);
+        //}
 
-        // GET: Order/Delete/5
-        public ActionResult Delete(int id)
-        {
-            var order = orderRep.GetById(id);
+        //// GET: Order/Delete/5
+        //public ActionResult Delete(int id)
+        //{
+        //    var order = orderRep.GetById(id);
 
-            if (order == null)
-            {
-                return NotFound();
-            }
+        //    if (order == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(order);
-        }
+        //    return View(order);
+        //}
 
-        // POST: Order/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            var order = orderRep.GetById(id);
+        //// POST: Order/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult DeleteConfirmed(int id)
+        //{
+        //    var order = orderRep.GetById(id);
 
-            if (order != null)
-            {
-                orderRep.Delete(order);
-                return RedirectToAction(nameof(Index));
-            }
+        //    if (order != null)
+        //    {
+        //        orderRep.Delete(order);
+        //        return RedirectToAction(nameof(Index));
+        //    }
 
-            return NotFound();
-        }
+        //    return NotFound();
+        //}
 
        
     }

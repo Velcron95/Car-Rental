@@ -20,10 +20,7 @@ namespace Car_Rental.Controllers
             this.applicationDbContext = applicationDbContext;
         }
 
-        public ActionResult Index()
-        {
-            return View(userRep.GetAll());
-        }
+
         // GET: User/Create
         public ActionResult Create()
         {
@@ -40,10 +37,9 @@ namespace Car_Rental.Controllers
                 if (ModelState.IsValid)
                 {
                     userRep.Add(user);
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Login","User");
                 }
 
-                // Log or inspect ModelState errors
                 foreach (var modelState in ModelState.Values)
                 {
                     foreach (var error in modelState.Errors)
@@ -63,8 +59,8 @@ namespace Car_Rental.Controllers
             }
         }
 
-        //Get
-            public IActionResult Login()
+       
+        public IActionResult Login()
         {
             return View();
         }
@@ -74,11 +70,16 @@ namespace Car_Rental.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (IsValidUser(model.Email, model.Password,out var user))
+                if (IsValidUser(model.Email, model.Password, out var user))
                 {
                     HttpContext.Session.SetInt32("UserId", user.UserId);
                     HttpContext.Session.SetString("Email", model.Email);
-                    HttpContext.Session.SetInt32("IsAdmin", Convert.ToInt32(user.IsAdmin));
+                    HttpContext.Session.SetString("IsAdmin", user.IsAdmin.ToString());
+                    if(user.IsAdmin == true)
+                    {
+                        return RedirectToAction("index", "Car");
+                    }
+
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -86,22 +87,22 @@ namespace Car_Rental.Controllers
                     ModelState.AddModelError("", "Invalid username or password");
                 }
             }
+
             return View(model);
         }
 
         private bool IsValidUser(string username, string password, out User user)
         {
-            user = applicationDbContext.User.FirstOrDefault(u => u.Email == username);
+            user = applicationDbContext.User.FirstOrDefault(u => u.Email == username && u.Password == password);
 
-            return user != null && user.Password == password;
+            return user != null;
         }
         [HttpPost]
         public ActionResult Logout()
         {
-            // Remove the session key
+            
             HttpContext.Session.Remove("Email");
-
-            // Optionally, remove the cookie (if you have set a cookie during login)
+            HttpContext.Session.Remove("IsAdmin");
             Response.Cookies.Delete("Email");
 
             return RedirectToAction("Index", "Home");
